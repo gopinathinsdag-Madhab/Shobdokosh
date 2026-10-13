@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>শব্দকোষ — তোমার নিজের জ্ঞানভাণ্ডার</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Bangla:ital@0;1&family=Hind+Siliguri:wght@300;400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #F6F1E4;
+    --paper-card: #FCFAF2;
+    --ink: #1E2A22;
+    --ink-soft: #4B5A4F;
+    --brass: #9C6B2E;
+    --brass-deep: #7A4F1C;
+    --sage: #56705C;
+    --line: #D8CFB4;
+    --shadow: rgba(30,42,34,0.18);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background: var(--paper);
+    background-image:
+      repeating-linear-gradient(0deg, rgba(30,42,34,0.02) 0px, rgba(30,42,34,0.02) 1px, transparent 1px, transparent 26px);
+    font-family:'Hind Siliguri', sans-serif;
+    color: var(--ink);
+    min-height:100vh;
+  }
+  a{color:var(--brass-deep); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+
+  header{
+    padding: 28px 24px 20px;
+    text-align:center;
+    border-bottom: 3px double var(--brass);
+    background: linear-gradient(180deg, rgba(156,107,46,0.06), transparent);
+  }
+  header h1{
+    font-family:'Tiro Bangla', serif;
+    font-size: 2.4rem;
+    margin:0;
+    letter-spacing: 0.5px;
+    color: var(--ink);
+  }
+  header .tag{
+    font-size:0.92rem;
+    color: var(--ink-soft);
+    margin-top:6px;
+    font-style: italic;
+  }
+
+  .layout{
+    display:grid;
+    grid-template-columns: 300px 1fr;
+    gap:0;
+    max-width: 1180px;
+    margin: 0 auto;
+    min-height: calc(100vh - 110px);
+  }
+  @media (max-width: 760px){
+    .layout{grid-template-columns: 1fr;}
+    .drawer{border-right:none; border-bottom: 2px solid var(--line);}
+  }
+
+  /* --- Card catalog drawer sidebar --- */
+  .drawer{
+    border-right: 2px solid var(--line);
+    padding: 18px 16px 40px;
+  }
+  .drawer-label{
+    font-family:'Tiro Bangla', serif;
+    font-size:1.05rem;
+    color: var(--brass-deep);
+    margin-bottom: 10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .new-btn{
+    background: var(--brass);
+    color:#fff;
+    border:none;
+    border-radius:3px;
+    padding:8px 14px;
+    font-family:'Hind Siliguri',sans-serif;
+    font-weight:600;
+    font-size:0.85rem;
+    cursor:pointer;
+    width:100%;
+    margin-bottom:14px;
+    letter-spacing:0.3px;
+    box-shadow: 0 2px 0 var(--brass-deep);
+    transition: transform .08s ease;
+  }
+  .new-btn:active{ transform: translateY(2px); box-shadow:none; }
+
+  .search-box{
+    width:100%;
+    padding:8px 10px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    background: var(--paper-card);
+    font-family:'Hind Siliguri',sans-serif;
+    font-size:0.9rem;
+    margin-bottom:16px;
+  }
+  .index-group{ margin-bottom: 10px; }
+  .index-letter{
+    font-family:'Tiro Bangla', serif;
+    font-size:0.78rem;
+    color: var(--sage);
+    border-bottom: 1px solid var(--line);
+    padding-bottom:2px;
+    margin-bottom:4px;
+    letter-spacing:1px;
+  }
+  .index-item{
+    display:block;
+    padding: 5px 6px;
+    border-radius:3px;
+    font-size:0.92rem;
+    cursor:pointer;
+    color: var(--ink);
+  }
+  .index-item:hover{ background: rgba(156,107,46,0.10); text-decoration:none; }
+  .index-item.active{ background: rgba(156,107,46,0.18); font-weight:600; }
+  .empty-note{ font-size:0.85rem; color: var(--ink-soft); font-style: italic; padding: 6px; }
+
+  /* --- Notebooks --- */
+  .notebook-box{
+    margin-bottom: 18px;
+    padding-bottom: 16px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .notebook-list{ margin-bottom: 8px; }
+  .notebook-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding: 7px 9px;
+    border-radius:3px;
+    cursor:pointer;
+    font-size:0.9rem;
+    color: var(--ink);
+    margin-bottom:2px;
+  }
+  .notebook-item:hover{ background: rgba(86,112,92,0.10); }
+  .notebook-item.active{ background: rgba(86,112,92,0.20); font-weight:600; color: var(--sage); }
+  .notebook-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .notebook-count{
+    font-size:0.72rem;
+    color: var(--ink-soft);
+    background: rgba(75,90,79,0.10);
+    border-radius: 10px;
+    padding: 1px 7px;
+    flex-shrink:0;
+  }
+  .notebook-item.active .notebook-count{ color: var(--sage); }
+  .notebook-actions{ display:flex; gap:6px; margin-top:6px; }
+  .notebook-actions .btn.small{ margin-bottom:0; flex:1; font-size:0.74rem; padding:6px 8px; }
+
+  .backup-box{
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--line);
+  }
+  .backup-label{
+    font-family:'Tiro Bangla', serif;
+    font-size:0.95rem;
+    color: var(--brass-deep);
+    margin-bottom:8px;
+  }
+  .btn.small{
+    width:100%;
+    text-align:center;
+    margin-bottom:8px;
+    padding:7px 10px;
+    font-size:0.8rem;
+  }
+  .backup-hint{
+    font-size:0.72rem;
+    color: var(--ink-soft);
+    line-height:1.5;
+    margin-top:4px;
+  }
+  .share-btn{
+    background: var(--sage);
+    color:#fff;
+    border-color: var(--sage);
+    font-weight:600;
+    padding:10px 10px;
+  }
+  .share-btn:hover{ background:#465c4c; }
+  .backup-more{ margin-top: 2px; }
+  .backup-more summary{
+    cursor:pointer;
+    font-size:0.78rem;
+    color: var(--brass-deep);
+    padding: 6px 2px;
+    list-style: none;
+  }
+  .backup-more summary::-webkit-details-marker{ display:none; }
+  .backup-more summary::before{ content:"▸ "; }
+  .backup-more[open] summary::before{ content:"▾ "; }
+  .backup-more .btn.small{ margin-top:8px; }
+
+  .select-link-bar{ margin: 8px 0; min-height: 34px; }
+  .linkify-btn{
+    background: var(--sage);
+    color:#fff;
+    border-color: var(--sage);
+    animation: popIn .12s ease;
+  }
+  .linkify-btn:hover{ background:#465c4c; }
+  @keyframes popIn{ from{ transform: scale(0.9); opacity:0; } to{ transform: scale(1); opacity:1; } }
+
+  /* --- Main content card --- */
+  main{ padding: 30px 34px; }
+  .card{
+    background: var(--paper-card);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    box-shadow: 0 3px 10px var(--shadow);
+    padding: 30px 36px;
+    max-width: 760px;
+    position:relative;
+  }
+  .card::before{
+    content:"";
+    position:absolute; left:0; top:16px; bottom:16px; width:3px;
+    background: var(--brass);
+    border-radius:2px;
+    opacity:0.7;
+  }
+  .page-title{
+    font-family:'Tiro Bangla', serif;
+    font-size:2rem;
+    margin:0 0 4px;
+    color: var(--ink);
+  }
+  .meta{
+    font-size:0.8rem;
+    color: var(--ink-soft);
+    margin-bottom:18px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom:14px;
+  }
+  .content-body{
+    font-family:'Source Serif 4', serif;
+    font-size:1.08rem;
+    line-height:1.85;
+    white-space: pre-wrap;
+    color: var(--ink);
+  }
+  .content-body a{ border-bottom: 1px dashed var(--brass-deep); }
+  .content-body a.missing{ color: var(--sage); border-bottom-style: dotted; }
+
+  .actions{ margin-top: 22px; display:flex; gap:10px; }
+  .btn{
+    border:1px solid var(--brass);
+    background: transparent;
+    color: var(--brass-deep);
+    padding: 7px 16px;
+    border-radius:3px;
+    font-family:'Hind Siliguri',sans-serif;
+    font-size:0.85rem;
+    cursor:pointer;
+  }
+  .btn:hover{ background: rgba(156,107,46,0.1); }
+  .btn.danger{ border-color:#9a3b3b; color:#9a3b3b; }
+  .btn.danger:hover{ background: rgba(154,59,59,0.08); }
+
+  .backlinks{ margin-top: 26px; }
+  .backlinks h3{
+    font-family:'Tiro Bangla', serif;
+    font-size:1rem;
+    color: var(--sage);
+    margin-bottom:8px;
+    border-top:1px dashed var(--line);
+    padding-top:14px;
+  }
+  .backlinks ul{ margin:0; padding-left:18px; font-size:0.92rem; }
+
+  /* form */
+  label{ display:block; font-size:0.85rem; color: var(--ink-soft); margin: 14px 0 5px; }
+  input[type=text], textarea, select{
+    width:100%;
+    padding:10px 12px;
+    border:1px solid var(--line);
+    border-radius:3px;
+    font-family:'Hind Siliguri',sans-serif;
+    font-size:1rem;
+    background:#fff;
+  }
+  input[type=text]{ font-family:'Tiro Bangla',serif; font-size:1.3rem; }
+  textarea{
+    font-family:'Source Serif 4', serif;
+    font-size:1.02rem;
+    min-height:260px;
+    resize:vertical;
+    line-height:1.7;
+  }
+  .hint{ font-size:0.78rem; color: var(--sage); margin-top:6px; }
+
+  .welcome{
+    font-family:'Source Serif 4', serif;
+    font-size:1.05rem;
+    line-height:1.8;
+    color: var(--ink-soft);
+  }
+  .welcome b{ color: var(--ink); }
+  .loading{ padding:40px; text-align:center; color: var(--ink-soft); }
+
+  /* --- Print --- */
+  @media print{
+    body{ background:#fff; }
+    header{ background:none; border-bottom: 2px solid #000; padding: 6px 0 12px; }
+    header .tag{ display:none; }
+    .layout{ display:block; max-width:100%; min-height:auto; }
+    .drawer{ display:none; }
+    main{ padding:0; }
+    .card{ box-shadow:none; border:none; max-width:100%; padding:0; background:#fff; }
+    .card::before{ display:none; }
+    .actions, .select-link-bar, .hint, .no-print{ display:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>শব্দকোষ</h1>
+  <div class="tag">তোমার নিজের জ্ঞানভাণ্ডার — শব্দ লেখো, একটার সাথে আরেকটা জুড়ে দাও</div>
+</header>
+
+<div class="layout">
+  <aside class="drawer">
+    <div class="notebook-box">
+      <div class="drawer-label">📓 নোটবুক<button class="btn small" id="addNotebookBtn" style="width:auto;margin:0;padding:4px 10px;font-size:0.72rem;">+ নতুন</button></div>
+      <div class="notebook-list" id="notebookList"></div>
+      <div class="notebook-actions">
+        <button class="btn small" id="renameNotebookBtn">নাম বদলাও</button>
+        <button class="btn small danger" id="deleteNotebookBtn">মুছে ফেলো</button>
+      </div>
+    </div>
+
+    <div class="drawer-label">📇 সূচি</div>
+    <button class="new-btn" id="newBtn">+ নতুন শব্দ লেখো</button>
+    <input type="text" class="search-box" id="searchBox" placeholder="খুঁজুন...">
+    <div id="indexList"></div>
+
+    <div class="backup-box">
+      <div class="backup-label">💾 ব্যাকআপ</div>
+      <button class="btn small share-btn" id="shareBtn">📤 শেয়ার করো (WhatsApp/Drive)</button>
+      <button class="btn small" id="importFileBtn">📂 ফাইল থেকে ফেরত আনো</button>
+      <input type="file" id="importFileInput" accept="application/json,.json" style="display:none;">
+      <div class="backup-hint">"শেয়ার করো" চাপলে ফোনের শেয়ার মেনু খুলবে — সরাসরি WhatsApp, Drive, Files বা যেকোনো অ্যাপে ব্যাকআপ ফাইলটা পাঠিয়ে দাও, কপি-পেস্টের ঝামেলা নেই। ফেরত আনতে সেই ফাইলটা "ফাইল থেকে ফেরত আনো"-তে বেছে নাও।</div>
+      <details class="backup-more">
+        <summary>আরও উপায় (পুরোনো পদ্ধতি)</summary>
+        <button class="btn small" id="downloadBtn">⬇️ ডাউনলোড করো (.json)</button>
+        <button class="btn small" id="copyBtn">📋 কপি করো (ক্লিপবোর্ডে)</button>
+        <button class="btn small" id="pasteImportBtn">পেস্ট করে ফেরত আনো</button>
+      </details>
+    </div>
+  </aside>
+
+  <main id="mainArea">
+    <div class="loading">লোড হচ্ছে...</div>
+  </main>
+</div>
+
+<script>
+const STORAGE_KEY = 'wiki-pages-v1';
+const DEFAULT_NOTEBOOK = 'সাধারণ';
+let pages = {}; // title -> {title, content, updatedAt, notebook}
+let notebooks = [DEFAULT_NOTEBOOK]; // list of notebook names
+let currentNotebook = DEFAULT_NOTEBOOK;
+let currentView = { mode: 'home' };
+const ALL_NOTEBOOKS = '__ALL__';
+
+async function loadPages(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY, false);
+    if(res && res.value){
+      const parsed = JSON.parse(res.value);
+      if(parsed && Array.isArray(parsed.notebooks) && parsed.pages){
+        notebooks = parsed.notebooks;
+        pages = parsed.pages;
+      } else if(parsed){
+        // old format: flat title -> page map, migrate into a default notebook
+        pages = parsed;
+        notebooks = [DEFAULT_NOTEBOOK];
+      }
+    }
+  }catch(e){
+    pages = {};
+    notebooks = [DEFAULT_NOTEBOOK];
+  }
+  if(!notebooks || notebooks.length === 0) notebooks = [DEFAULT_NOTEBOOK];
+  Object.keys(pages).forEach(k => {
+    if(!pages[k].notebook || !notebooks.includes(pages[k].notebook)){
+      pages[k].notebook = notebooks[0];
+    }
+  });
+  if(!currentNotebook || (currentNotebook !== ALL_NOTEBOOKS && !notebooks.includes(currentNotebook))){
+    currentNotebook = notebooks[0];
+  }
+}
+
+async function savePages(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify({notebooks, pages}), false);
+  }catch(e){
+    console.error('সেভ করতে সমস্যা হয়েছে', e);
+  }
+}
+
+function escapeHtml(str){
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Parse [[Word]] links inside content
+function renderContent(text){
+  const escaped = escapeHtml(text);
+  return escaped.replace(/\[\[(.+?)\]\]/g, (m, word) => {
+    const trimmed = word.trim();
+    const exists = !!pages[trimmed];
+    const cls = exists ? '' : ' class="missing"';
+    return `<a href="#" data-nav="${escapeHtml(trimmed)}"${cls}>${escapeHtml(trimmed)}</a>`;
+  });
+}
+
+function findBacklinks(title){
+  const links = [];
+  for(const key in pages){
+    if(key === title) continue;
+    const re = new RegExp('\\[\\[\\s*' + title.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + '\\s*\\]\\]');
+    if(re.test(pages[key].content)) links.push(key);
+  }
+  return links;
+}
+
+function renderNotebooks(){
+  const listEl = document.getElementById('notebookList');
+  let html = '';
+  const allCount = Object.keys(pages).length;
+  const allActive = currentNotebook === ALL_NOTEBOOKS ? ' active' : '';
+  html += `<div class="notebook-item${allActive}" data-notebook="${ALL_NOTEBOOKS}">
+    <span class="notebook-name">🗂️ সব নোটবুক</span>
+    <span class="notebook-count">${allCount}</span>
+  </div>`;
+  notebooks.forEach(nb => {
+    const count = Object.values(pages).filter(p => p.notebook === nb).length;
+    const active = nb === currentNotebook ? ' active' : '';
+    html += `<div class="notebook-item${active}" data-notebook="${escapeHtml(nb)}">
+      <span class="notebook-name">${escapeHtml(nb)}</span>
+      <span class="notebook-count">${count}</span>
+    </div>`;
+  });
+  listEl.innerHTML = html;
+  listEl.querySelectorAll('.notebook-item').forEach(item => {
+    item.onclick = () => {
+      currentNotebook = item.getAttribute('data-notebook');
+      currentView = {mode:'home'};
+      render();
+    };
+  });
+  const deleteBtn = document.getElementById('deleteNotebookBtn');
+  const renameBtn = document.getElementById('renameNotebookBtn');
+  const isRealNotebook = currentNotebook !== ALL_NOTEBOOKS;
+  deleteBtn.style.display = (isRealNotebook && notebooks.length > 1) ? '' : 'none';
+  renameBtn.style.display = isRealNotebook ? '' : 'none';
+}
+
+function renderIndex(filter){
+  const listEl = document.getElementById('indexList');
+  const scoped = currentNotebook === ALL_NOTEBOOKS
+    ? Object.keys(pages)
+    : Object.keys(pages).filter(t => pages[t].notebook === currentNotebook);
+  const titles = scoped.sort((a,b)=>a.localeCompare(b,'bn'));
+  const filtered = filter ? titles.filter(t => t.toLowerCase().includes(filter.toLowerCase())) : titles;
+
+  if(filtered.length === 0){
+    listEl.innerHTML = `<div class="empty-note">${filter ? 'কিছু পাওয়া যায়নি' : 'এই নোটবুকে এখনো কোনো শব্দ লেখা হয়নি — "নতুন শব্দ লেখো" চাপুন'}</div>`;
+    return;
+  }
+
+  const groups = {};
+  filtered.forEach(t => {
+    const letter = t.trim()[0]?.toUpperCase() || '#';
+    if(!groups[letter]) groups[letter] = [];
+    groups[letter].push(t);
+  });
+
+  let html = '';
+  Object.keys(groups).sort((a,b)=>a.localeCompare(b,'bn')).forEach(letter => {
+    html += `<div class="index-group"><div class="index-letter">${letter}</div>`;
+    groups[letter].forEach(t => {
+      const active = (currentView.mode==='view' && currentView.title===t) ? ' active' : '';
+      html += `<a class="index-item${active}" data-nav="${escapeHtml(t)}">${escapeHtml(t)}</a>`;
+    });
+    html += `</div>`;
+  });
+  listEl.innerHTML = html;
+}
+
+function renderMain(){
+  const main = document.getElementById('mainArea');
+
+  if(currentView.mode === 'home'){
+    const total = Object.keys(pages).length;
+    const inNotebook = currentNotebook === ALL_NOTEBOOKS ? total : Object.values(pages).filter(p=>p.notebook===currentNotebook).length;
+    const notebookLine = currentNotebook === ALL_NOTEBOOKS
+      ? `তুমি এখন <b>সব নোটবুক</b> একসাথে দেখছো — মোট <b>${total}</b>টা শব্দ, <b>${notebooks.length}</b>টা নোটবুকে ছড়ানো।`
+      : `তুমি এখন <b>"${escapeHtml(currentNotebook)}"</b> নোটবুকে আছো — এখানে <b>${inNotebook}</b>টা শব্দ আছে।`;
+    main.innerHTML = `
+      <div class="card">
+        <h2 class="page-title">স্বাগতম</h2>
+        <div class="content-body welcome">
+          এটা তোমার নিজের ছোট্ট বিশ্বকোষ। বাঁ পাশে <b>"নতুন শব্দ লেখো"</b>-তে চাপ দিয়ে যেকোনো বিষয়ে লেখা শুরু করো।<br><br>
+          বিভিন্ন বিষয়কে আলাদা রাখতে ওপরে <b>📓 নোটবুক</b> অংশে "+ নতুন" চেপে আলাদা আলাদা নোটবুক বানাতে পারো (যেমন: ইতিহাস, বিজ্ঞান, ব্যক্তিগত)। কোনো একটায় ক্লিক করলে সেই নোটবুকের শব্দগুলোই দেখাবে।<br><br>
+          লেখার মধ্যে যদি অন্য কোনো শব্দকে জুড়তে চাও, সেটাকে দুই বন্ধনীর মধ্যে লেখো — যেমন <code>[[নদী]]</code> — লেখাটা সেভ করলে এটা আপনা-আপনি একটা লিংক হয়ে যাবে। সেই শব্দ আগে থেকে না থাকলেও চাপ দিলে নতুন পাতা খুলে যাবে।<br><br>
+          ${notebookLine}
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  if(currentView.mode === 'pasteImport'){
+    main.innerHTML = `
+      <div class="card">
+        <h2 class="page-title">পেস্ট করে ফেরত আনো</h2>
+        <div class="content-body welcome">আগে কপি করে রাখা ব্যাকআপ টেক্সটটা নিচে পেস্ট করো।</div>
+        <label for="pasteImportText">ব্যাকআপ টেক্সট</label>
+        <textarea id="pasteImportText" placeholder="এখানে পেস্ট করো..."></textarea>
+        <div class="actions">
+          <button class="btn" id="loadPasteBtn" style="background:var(--brass);color:#fff;border-color:var(--brass);">লোড করো</button>
+          <button class="btn" id="cancelPasteBtn">বাতিল</button>
+        </div>
+      </div>
+    `;
+    document.getElementById('loadPasteBtn').onclick = onPasteImport;
+    document.getElementById('cancelPasteBtn').onclick = () => { currentView = {mode:'home'}; render(); };
+    return;
+  }
+
+  if(currentView.mode === 'showBackupText'){
+    main.innerHTML = `
+      <div class="card">
+        <h2 class="page-title">তোমার ব্যাকআপ</h2>
+        <div class="content-body welcome">ক্লিপবোর্ড সরাসরি কাজ করেনি, তাই নিচের টেক্সটটা নিজে সিলেক্ট করে কপি করো (পুরোটা ট্যাপ করে ধরে রেখে "সব সিলেক্ট করো" দিয়ে), তারপর যেকোনো অ্যাপে পেস্ট করে সেভ রাখো।</div>
+        <textarea readonly onclick="this.select()">${escapeHtml(currentView.text)}</textarea>
+        <div class="actions">
+          <button class="btn" id="backHomeBtn">ফিরে যাও</button>
+        </div>
+      </div>
+    `;
+    document.getElementById('backHomeBtn').onclick = () => { currentView = {mode:'home'}; render(); };
+    return;
+  }
+
+  if(currentView.mode === 'edit'){
+    const isNew = !currentView.originalTitle;
+    const page = currentView.originalTitle ? pages[currentView.originalTitle] : null;
+    const defaultNotebook = page ? page.notebook : (currentNotebook !== ALL_NOTEBOOKS ? currentNotebook : notebooks[0]);
+    const notebookOptions = notebooks.map(nb =>
+      `<option value="${escapeHtml(nb)}"${nb===defaultNotebook ? ' selected' : ''}>${escapeHtml(nb)}</option>`
+    ).join('');
+    main.innerHTML = `
+      <div class="card">
+        <h2 class="page-title">${isNew ? 'নতুন শব্দ' : 'সম্পাদনা করো'}</h2>
+        <label for="titleInput">শব্দ / শিরোনাম</label>
+        <input type="text" id="titleInput" value="${page ? escapeHtml(page.title) : escapeHtml(currentView.prefillTitle||'')}" placeholder="যেমন: নদী">
+        <label for="notebookSelect">নোটবুক</label>
+        <select id="notebookSelect">${notebookOptions}</select>
+        <label for="contentInput">লেখা</label>
+        <textarea id="contentInput" placeholder="এখানে লেখো... অন্য শব্দ জুড়তে [[শব্দ]] এভাবে লেখো">${page ? escapeHtml(page.content) : ''}</textarea>
+        <div class="select-link-bar" id="selectLinkBar" style="display:none;">
+          <button class="btn small linkify-btn" id="linkifyBtn">🔗 নির্বাচিত অংশ সংযুক্ত করো</button>
+        </div>
+        <div class="hint">টিপ: লেখার মধ্যে কোনো শব্দ সিলেক্ট করলেই ওপরে "সংযুক্ত করো" বাটন আসবে — চাপলেই সেটা অন্য পাতার সাথে জুড়ে যাবে। অথবা হাতে [[শব্দ]] লিখেও জোড়া যায়।</div>
+        <div class="actions">
+          <button class="btn" id="saveBtn" style="background:var(--brass);color:#fff;border-color:var(--brass);">সেভ করো</button>
+          <button class="btn" id="cancelBtn">বাতিল</button>
+        </div>
+      </div>
+    `;
+    document.getElementById('saveBtn').onclick = onSave;
+    document.getElementById('cancelBtn').onclick = () => {
+      if(page){ currentView = {mode:'view', title: page.title}; }
+      else { currentView = {mode:'home'}; }
+      render();
+    };
+
+    // --- select-text-to-link feature ---
+    const contentInput = document.getElementById('contentInput');
+    const linkBar = document.getElementById('selectLinkBar');
+    const linkifyBtn = document.getElementById('linkifyBtn');
+    let savedSelection = null;
+
+    function updateSelectionState(){
+      if(document.activeElement !== contentInput){ return; }
+      const start = contentInput.selectionStart;
+      const end = contentInput.selectionEnd;
+      if(end > start){
+        savedSelection = {start, end};
+        linkBar.style.display = 'block';
+      } else {
+        linkBar.style.display = 'none';
+        savedSelection = null;
+      }
+    }
+
+    contentInput.addEventListener('select', updateSelectionState);
+    contentInput.addEventListener('mouseup', updateSelectionState);
+    contentInput.addEventListener('keyup', updateSelectionState);
+    contentInput.addEventListener('touchend', () => setTimeout(updateSelectionState, 60));
+
+    linkifyBtn.onclick = () => {
+      if(!savedSelection) return;
+      const {start, end} = savedSelection;
+      const val = contentInput.value;
+      const selectedText = val.slice(start, end).trim();
+      if(!selectedText) return;
+      const newVal = val.slice(0, start) + '[[' + selectedText + ']]' + val.slice(end);
+      contentInput.value = newVal;
+      const newCursorPos = start + selectedText.length + 4;
+      contentInput.focus();
+      contentInput.setSelectionRange(newCursorPos, newCursorPos);
+      linkBar.style.display = 'none';
+      savedSelection = null;
+    };
+    return;
+  }
+
+  if(currentView.mode === 'view'){
+    const page = pages[currentView.title];
+    if(!page){
+      // missing page — offer to create
+      main.innerHTML = `
+        <div class="card">
+          <h2 class="page-title">${escapeHtml(currentView.title)}</h2>
+          <div class="content-body welcome">এই শব্দটা এখনো লেখা হয়নি।</div>
+          <div class="actions">
+            <button class="btn" id="createHereBtn" style="background:var(--brass);color:#fff;border-color:var(--brass);">এই শব্দে লেখো</button>
+          </div>
+        </div>
+      `;
+      document.getElementById('createHereBtn').onclick = () => {
+        currentView = {mode:'edit', prefillTitle: currentView.title};
+        render();
+      };
+      return;
+    }
+    const backlinks = findBacklinks(page.title);
+    main.innerHTML = `
+      <div class="card">
+        <h2 class="page-title">${escapeHtml(page.title)}</h2>
+        <div class="meta">📓 ${escapeHtml(page.notebook || DEFAULT_NOTEBOOK)} · সর্বশেষ পরিবর্তন: ${new Date(page.updatedAt).toLocaleString('bn-BD')}</div>
+        <div class="content-body">${renderContent(page.content)}</div>
+        <div class="actions">
+          <button class="btn" id="editBtn">সম্পাদনা</button>
+          <button class="btn" id="printBtn">🖨️ প্রিন্ট করো</button>
+          <button class="btn danger" id="deleteBtn">মুছে ফেলো</button>
+        </div>
+        ${backlinks.length ? `
+        <div class="backlinks">
+          <h3>যেসব শব্দ এর সাথে যুক্ত</h3>
+          <ul>${backlinks.map(b=>`<li><a href="#" data-nav="${escapeHtml(b)}">${escapeHtml(b)}</a></li>`).join('')}</ul>
+        </div>` : ''}
+      </div>
+    `;
+    document.getElementById('editBtn').onclick = () => {
+      currentView = {mode:'edit', originalTitle: page.title};
+      render();
+    };
+    document.getElementById('printBtn').onclick = () => {
+      window.print();
+    };
+    document.getElementById('deleteBtn').onclick = async () => {
+      if(confirm(`"${page.title}" মুছে ফেলবে?`)){
+        delete pages[page.title];
+        await savePages();
+        currentView = {mode:'home'};
+        render();
+      }
+    };
+  }
+}
+
+async function onSave(){
+  const titleInput = document.getElementById('titleInput');
+  const contentInput = document.getElementById('contentInput');
+  const notebookSelect = document.getElementById('notebookSelect');
+  const newTitle = titleInput.value.trim();
+  const newContent = contentInput.value;
+  const newNotebook = notebookSelect && notebooks.includes(notebookSelect.value) ? notebookSelect.value : notebooks[0];
+
+  if(!newTitle){
+    alert('একটা শিরোনাম দিতে হবে।');
+    return;
+  }
+
+  const originalTitle = currentView.originalTitle;
+  if(originalTitle && originalTitle !== newTitle){
+    delete pages[originalTitle];
+  }
+
+  pages[newTitle] = {
+    title: newTitle,
+    content: newContent,
+    notebook: newNotebook,
+    updatedAt: new Date().toISOString()
+  };
+
+  await savePages();
+  currentNotebook = newNotebook;
+  currentView = {mode:'view', title: newTitle};
+  render();
+}
+
+function render(){
+  renderMain();
+  renderNotebooks();
+  renderIndex(document.getElementById('searchBox').value);
+  attachNavHandlers();
+}
+
+function attachNavHandlers(){
+  document.querySelectorAll('[data-nav]').forEach(el => {
+    el.onclick = (e) => {
+      e.preventDefault();
+      const title = el.getAttribute('data-nav');
+      // jump the active notebook to match the target page, if we know it
+      const target = pages[title];
+      if(target && target.notebook && currentNotebook !== ALL_NOTEBOOKS){
+        currentNotebook = target.notebook;
+      }
+      currentView = {mode:'view', title};
+      render();
+    };
+  });
+}
+
+document.getElementById('newBtn').onclick = () => {
+  currentView = {mode:'edit'};
+  render();
+};
+
+document.getElementById('addNotebookBtn').onclick = async () => {
+  const name = (prompt('নতুন নোটবুকের নাম দাও:') || '').trim();
+  if(!name) return;
+  if(notebooks.includes(name)){
+    alert('এই নামে একটা নোটবুক আগে থেকেই আছে।');
+    return;
+  }
+  notebooks.push(name);
+  currentNotebook = name;
+  await savePages();
+  currentView = {mode:'home'};
+  render();
+};
+
+document.getElementById('renameNotebookBtn').onclick = async () => {
+  if(currentNotebook === ALL_NOTEBOOKS) return;
+  const oldName = currentNotebook;
+  const newName = (prompt('নতুন নাম দাও:', oldName) || '').trim();
+  if(!newName || newName === oldName) return;
+  if(notebooks.includes(newName)){
+    alert('এই নামে একটা নোটবুক আগে থেকেই আছে।');
+    return;
+  }
+  notebooks = notebooks.map(nb => nb === oldName ? newName : nb);
+  Object.keys(pages).forEach(t => {
+    if(pages[t].notebook === oldName) pages[t].notebook = newName;
+  });
+  currentNotebook = newName;
+  await savePages();
+  render();
+};
+
+document.getElementById('deleteNotebookBtn').onclick = async () => {
+  if(currentNotebook === ALL_NOTEBOOKS || notebooks.length <= 1) return;
+  const target = currentNotebook;
+  const pageCount = Object.values(pages).filter(p => p.notebook === target).length;
+  const msg = pageCount > 0
+    ? `"${target}" নোটবুক মুছে ফেললে এর ${pageCount}টা শব্দ বাকি নোটবুকগুলোর প্রথমটায় সরিয়ে দেওয়া হবে। এগোবে?`
+    : `"${target}" নোটবুকটা মুছে ফেলবে?`;
+  if(!confirm(msg)) return;
+  const remaining = notebooks.filter(nb => nb !== target);
+  const fallback = remaining[0];
+  Object.keys(pages).forEach(t => {
+    if(pages[t].notebook === target) pages[t].notebook = fallback;
+  });
+  notebooks = remaining;
+  currentNotebook = fallback;
+  await savePages();
+  currentView = {mode:'home'};
+  render();
+};
+
+function backupJson(){
+  return JSON.stringify({notebooks, pages}, null, 2);
+}
+
+function backupFilename(){
+  const dateStr = new Date().toISOString().slice(0,10);
+  return `shobdokosh-backup-${dateStr}.json`;
+}
+
+function triggerDownload(dataStr, filename){
+  const blob = new Blob([dataStr], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Shared restore logic used by both "paste text" and "pick a file" flows.
+async function restoreFromBackupText(raw){
+  raw = (raw || '').trim();
+  if(!raw){ alert('কিছু পাওয়া যায়নি।'); return; }
+  try{
+    const imported = JSON.parse(raw);
+    if(typeof imported !== 'object' || Array.isArray(imported)){
+      alert('এই ফাইল/টেক্সটটা ঠিক ফরম্যাটে নেই।');
+      return;
+    }
+    const willReplace = Object.keys(pages).length > 0;
+    if(willReplace && !confirm('বর্তমান ডেটার সাথে মিলিয়ে নেওয়া হবে (একই নামের শব্দ থাকলে ফেরত আনা ডেটাটা থাকবে)। এগোবে?')){
+      return;
+    }
+    let importedNotebooks, importedPages;
+    if(Array.isArray(imported.notebooks) && imported.pages){
+      importedNotebooks = imported.notebooks;
+      importedPages = imported.pages;
+    } else {
+      // old-format backup: flat title -> page map, no notebooks
+      importedNotebooks = [];
+      importedPages = imported;
+    }
+    importedNotebooks.forEach(nb => { if(!notebooks.includes(nb)) notebooks.push(nb); });
+    Object.keys(importedPages).forEach(t => {
+      if(!importedPages[t].notebook || !notebooks.includes(importedPages[t].notebook)){
+        importedPages[t].notebook = notebooks[0];
+      }
+    });
+    pages = { ...pages, ...importedPages };
+    await savePages();
+    currentView = {mode:'home'};
+    render();
+    alert('ডেটা ফেরত আনা হয়েছে ✅');
+  }catch(err){
+    alert('এই ফাইল/টেক্সটটা পড়া গেল না — সঠিক ব্যাকআপ বেছে নেওয়া বা পেস্ট করা হয়েছে কি না দেখো।');
+  }
+}
+
+document.getElementById('shareBtn').onclick = async () => {
+  const dataStr = backupJson();
+  const filename = backupFilename();
+  try{
+    const file = new File([dataStr], filename, {type:'application/json'});
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({
+        files: [file],
+        title: 'শব্দকোষ ব্যাকআপ',
+        text: `শব্দকোষ ব্যাকআপ — ${new Date().toLocaleDateString('bn-BD')}`
+      });
+      return;
+    }
+  }catch(e){
+    if(e && e.name === 'AbortError') return; // user cancelled the share sheet
+    console.error(e);
+  }
+  // fallback for browsers without file-sharing support
+  try{
+    triggerDownload(dataStr, filename);
+    alert('তোমার ব্রাউজারে সরাসরি শেয়ার করা গেল না, তাই ফাইলটা ডাউনলোড হয়েছে — Files/Downloads অ্যাপে খুঁজে দেখো।');
+  }catch(e2){
+    currentView = {mode:'showBackupText', text: dataStr};
+    render();
+  }
+};
+
+document.getElementById('importFileBtn').onclick = () => {
+  document.getElementById('importFileInput').click();
+};
+
+document.getElementById('importFileInput').addEventListener('change', async (e) => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = ''; // reset so the same file can be picked again later
+  if(!file) return;
+  try{
+    const text = await file.text();
+    await restoreFromBackupText(text);
+  }catch(err){
+    alert('ফাইলটা পড়া গেল না।');
+  }
+});
+
+document.getElementById('copyBtn').onclick = async () => {
+  const text = backupJson();
+  try{
+    await navigator.clipboard.writeText(text);
+    alert('কপি হয়ে গেছে ✅ — এখন যেকোনো অ্যাপে (WhatsApp, Notes, Drive) পেস্ট করে সেভ করে রাখো।');
+  }catch(e){
+    // clipboard API blocked — show text so user can select & copy manually
+    currentView = {mode:'showBackupText', text};
+    render();
+  }
+};
+
+document.getElementById('downloadBtn').onclick = () => {
+  triggerDownload(backupJson(), backupFilename());
+};
+
+document.getElementById('pasteImportBtn').onclick = () => {
+  currentView = {mode:'pasteImport'};
+  render();
+};
+
+async function onPasteImport(){
+  const textEl = document.getElementById('pasteImportText');
+  await restoreFromBackupText(textEl.value);
+}
+
+document.getElementById('searchBox').addEventListener('input', (e) => {
+  renderIndex(e.target.value);
+  attachNavHandlers();
+});
+
+(async function init(){
+  await loadPages();
+  render();
+})();
+</script>
+</body>
+</html>
